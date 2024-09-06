@@ -6,7 +6,9 @@
         {{ title }}
     </div>
     <div class="p-toolbar-group-end">
-        <i class="pi pi-shopping-cart" style="font-size: 2rem"></i>
+        <i class="pi pi-shopping-cart" 
+           style="font-size: 2rem; cursor: pointer;"
+           (click)="navigateToCart()"></i>
     </div>
 </p-toolbar>
 <p-splitter 
@@ -14,7 +16,7 @@
     [style]="{ height: 'calc(100vh - 100px)' }">
     <ng-template pTemplate>
         <div class="w-full">
-            <app-panel-menu />
+            <app-panel-menu></app-panel-menu>
         </div>
     </ng-template>
     <ng-template pTemplate>
