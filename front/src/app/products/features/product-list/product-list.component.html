@@ -1,10 +1,19 @@
 <h1 class="text-center">Liste des produits</h1>
 
-<p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
+<div class="flex justify-between mx-5">
+    <p-button label="Créer produit" (onClick)="onCreate()" class="block mx-5 px-2 text-center"/>
+    <mat-paginator [length]="totalProducts"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="[5, 10, 20]"
+                (page)="onPageChange($event)"
+                class="ml-auto">
+    </mat-paginator>
+</div>
 
-<p-dataView #dv [value]="products()">
+
+<p-dataView #dv [value]="paginatedProducts">
     <ng-template pTemplate="list" let-products>
-        @for (product of products; track product) {
+        @for (product of paginatedProducts; track product) {
             <p-card class="block mb-2 mx-5 px-5">
                 <div class="flex justify-between items-start">
                     <div class="product-info flex-1 pr-4 px-5">
@@ -44,6 +53,13 @@
         }
     </ng-template>
 </p-dataView>
+
+<mat-paginator [length]="totalProducts"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="[5, 10, 20]"
+                (page)="onPageChange($event)"
+                class="ml-auto">
+    </mat-paginator>
 
 <p-dialog [(visible)]="isDialogVisible"
     [style]="{ width: '50vw' }"
