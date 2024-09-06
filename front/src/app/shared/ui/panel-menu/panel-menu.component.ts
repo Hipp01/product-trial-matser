@@ -29,6 +29,11 @@ import { MenuItem } from "primeng/api";
             label: 'Panier',
             icon: 'pi pi-shopping-cart',
             routerLink: ['/cart']
+        },
+        {
+            label: 'Contact',
+            icon: 'pi pi-envelope',
+            routerLink: ['/contact']
         }
     ]
   }
