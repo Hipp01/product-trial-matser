@@ -1,11 +1,13 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, OnInit, ViewChild, inject, signal } from "@angular/core";
 import { Product } from "app/products/data-access/product.model";
 import { ProductsService } from "app/products/data-access/products.service";
+import { CartService } from "app/cart/data-access/cart.service";
 import { ProductFormComponent } from "app/products/ui/product-form/product-form.component";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 const emptyProduct: Product = {
   id: 0,
@@ -29,19 +31,38 @@ const emptyProduct: Product = {
   templateUrl: "./product-list.component.html",
   styleUrls: ["./product-list.component.scss"],
   standalone: true,
-  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent],
+  imports: [
+    DataViewModule,
+    CardModule,
+    ButtonModule,
+    DialogModule,
+    ProductFormComponent,
+    MatPaginatorModule // Ajout de MatPaginatorModule ici
+  ]
 })
+
 export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
+  private readonly cartService = inject(CartService);
 
   public readonly products = this.productsService.products;
-
   public isDialogVisible = false;
   public isCreation = false;
   public readonly editedProduct = signal<Product>(emptyProduct);
+  
+  // Pagination properties
+  public pageSize = 5;
+  public currentPage = 0;
+  public totalProducts = 0;
+  public paginatedProducts: Product[] = [];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.productsService.get().subscribe();
+    this.productsService.get().subscribe(products => {
+      this.totalProducts = products.length;
+      this.updatePaginatedProducts();
+    });
   }
 
   public onCreate() {
@@ -57,14 +78,20 @@ export class ProductListComponent implements OnInit {
   }
 
   public onDelete(product: Product) {
-    this.productsService.delete(product.id).subscribe();
+    this.productsService.delete(product.id).subscribe(() => {
+      this.updatePaginatedProducts();
+    });
   }
 
   public onSave(product: Product) {
     if (this.isCreation) {
-      this.productsService.create(product).subscribe();
+      this.productsService.create(product).subscribe(() => {
+        this.updatePaginatedProducts();
+      });
     } else {
-      this.productsService.update(product).subscribe();
+      this.productsService.update(product).subscribe(() => {
+        this.updatePaginatedProducts();
+      });
     }
     this.closeDialog();
   }
@@ -75,5 +102,24 @@ export class ProductListComponent implements OnInit {
 
   private closeDialog() {
     this.isDialogVisible = false;
+  }
+
+  public onAddToCart(product: Product) {
+    this.cartService.addToCart(product);
+    alert(`${product.name} a été ajouté au panier !`);
+  }
+
+  // Pagination event handler
+  public onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedProducts();
+  }
+
+  // Update the products displayed according to pagination
+  private updatePaginatedProducts() {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedProducts = this.products().slice(startIndex, endIndex);
   }
 }

@@ -7,6 +7,7 @@ import {
 } from "@angular/common/http";
 import localeFr from "@angular/common/locales/fr";
 import { BrowserModule, bootstrapApplication } from "@angular/platform-browser";
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideRouter } from "@angular/router";
 import { APP_ROUTES } from "app/app.routes";
@@ -22,6 +23,7 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserModule),
+    importProvidersFrom(MatPaginatorModule),
     provideHttpClient(
       withInterceptorsFromDi(),
     ),
