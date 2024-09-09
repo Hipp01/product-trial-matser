@@ -77,3 +77,60 @@ Le back-end créé doit pouvoir gérer les produits dans une base de données SQ
 ## Bonus
 
 Vous pouvez ajouter des tests Postman ou Swagger pour valider votre API
+
+
+
+# Installation et tests du projet
+
+Pour installer et initialiser le projet, suivez les étapes suivantes : 
+```bash
+git clone https://github.com/Hipp01/product-trial-matser.git
+cd product-trial-matser
+```
+
+## Front-end
+
+Pour installer le front-end, suivez les étapes suivantes : 
+```bash
+cd front
+npm install
+ng serve
+```
+
+Pour tester le front-end, ouvrez votre navigateur et allez à l'adresse suivante : 
+```
+http://localhost:4200
+```
+
+
+## Back-end
+
+Pour installer le back-end, suivez les étapes suivantes : 
+```bash
+cd back
+```	
+
+Ajouter un fichier .env à la racine du dossier back avec les informations suivantes : 
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_NAME=productsdb
+```
+
+Pour installer les dépendances et lancer le serveur, suivez les étapes suivantes : 
+```bash
+npm install
+npm start
+```
+
+Pour lancer les tests, suivez les étapes suivantes : 
+```bash
+npm test
+```
+
+Pour lancer les tests réalisés avec Postman, suivez les étapes suivantes : 
+```bash
+npm run test:postman
+```
