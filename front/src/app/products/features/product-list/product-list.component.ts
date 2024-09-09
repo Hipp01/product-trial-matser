@@ -8,6 +8,7 @@ import { CardModule } from "primeng/card";
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { CommonModule } from '@angular/common';
 
 const emptyProduct: Product = {
   id: 0,
@@ -32,12 +33,13 @@ const emptyProduct: Product = {
   styleUrls: ["./product-list.component.scss"],
   standalone: true,
   imports: [
+    CommonModule,
     DataViewModule,
     CardModule,
     ButtonModule,
     DialogModule,
     ProductFormComponent,
-    MatPaginatorModule // Ajout de MatPaginatorModule ici
+    MatPaginatorModule
   ]
 })
 

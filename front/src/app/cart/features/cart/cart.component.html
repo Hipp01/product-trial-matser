@@ -8,6 +8,16 @@
           <div class="text-lg font-medium text-900 mt-2">{{ item.name }}</div>
           <div class="text-sm mt-2">{{ item.description }}</div>
           <div class="text-lg font-medium text-900 mt-2">{{ item.price }} €</div>
+          <div class="flex items-center mt-3">
+              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+                  <i class="pi" 
+                  [ngClass]="{
+                      'pi-star-fill text-yellow-500': i < item.rating,
+                      'pi-star text-gray-400': i >= item.rating
+                  }"></i>
+              </ng-container>
+              <span class="ml-2 text-sm text-gray-600">({{ item.rating }} / 5)</span>
+          </div>
           <div class="text-lg mt-2">
               @if (item.inventoryStatus === 'INSTOCK') {
                   <p class="font-medium text-green-500">In stock</p>
