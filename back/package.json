@@ -5,7 +5,8 @@
     "start": "ts-node src/app.ts",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "test:postman": "newman run tests/tests-postman.json"
   },
   "dependencies": {
     "class-validator": "^0.14.1",
