@@ -16,7 +16,7 @@ describe('Product API', () => {
 
   afterAll(async () => {
     // Supprime tous les produits
-    await AppDataSource.getRepository(Product).clear(); // Utilisez clear() pour effacer les données de test
+    await AppDataSource.getRepository(Product).clear();
 
     if (AppDataSource.isInitialized) {
       await AppDataSource.destroy();
@@ -50,11 +50,11 @@ describe('Product API', () => {
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
       ...newProduct,
-      price: expect.any(Number), // Vérifier que le prix est un nombre
-      rating: expect.any(Number), // Vérifier que le rating est un nombre
+      price: expect.any(Number),
+      rating: expect.any(Number),
     });
-    expect(Number.isInteger(response.body.price)).toBe(true); // Vérifier que le prix est un entier
-    expect(Number.isInteger(response.body.rating)).toBe(true); // Vérifier que le rating est un entier
+    expect(Number.isInteger(response.body.price)).toBe(true);
+    expect(Number.isInteger(response.body.rating)).toBe(true);
   });
 
   it('should fetch a product by ID', async () => {
@@ -70,7 +70,7 @@ describe('Product API', () => {
       internalReference: 'REF002',
       shellId: 2,
       inventoryStatus: 'LOWSTOCK',
-      rating: 4, // Utiliser un nombre entier pour rating
+      rating: 4,
       createdAt: Math.floor(Date.now() / 1000),
       updatedAt: Math.floor(Date.now() / 1000),
     });
@@ -80,7 +80,6 @@ describe('Product API', () => {
 
     const fetchedProduct = response.body;
 
-    // Convertir les champs string en nombres pour les comparer
     const convertedFetchedProduct = {
       ...fetchedProduct,
       createdAt: parseInt(fetchedProduct.createdAt, 10),
@@ -91,16 +90,16 @@ describe('Product API', () => {
 
     const expectedProduct = {
       ...newProduct.body,
-      price: newProduct.body.price, // Comparer comme nombre
-      rating: newProduct.body.rating, // Comparer comme nombre
+      price: newProduct.body.price,
+      rating: newProduct.body.rating,
     };
 
     // Vérifier que les produits récupérés et attendus sont les mêmes après conversion
     expect(convertedFetchedProduct).toMatchObject(expectedProduct);
-    expect(Number.isInteger(convertedFetchedProduct.price)).toBe(true); // Vérifier que le prix est un entier
-    expect(Number.isInteger(convertedFetchedProduct.rating)).toBe(true); // Vérifier que le rating est un entier
-    expect(Number.isInteger(convertedFetchedProduct.createdAt)).toBe(true); // Vérifier que createdAt est un entier
-    expect(Number.isInteger(convertedFetchedProduct.updatedAt)).toBe(true); // Vérifier que updatedAt est un entier
+    expect(Number.isInteger(convertedFetchedProduct.price)).toBe(true);
+    expect(Number.isInteger(convertedFetchedProduct.rating)).toBe(true);
+    expect(Number.isInteger(convertedFetchedProduct.createdAt)).toBe(true);
+    expect(Number.isInteger(convertedFetchedProduct.updatedAt)).toBe(true);
   });
 
   it('should update a product by ID', async () => {
@@ -115,7 +114,7 @@ describe('Product API', () => {
       internalReference: 'REF003',
       shellId: 3,
       inventoryStatus: 'OUTOFSTOCK',
-      rating: 3, // Utiliser un nombre entier pour rating
+      rating: 3,
       createdAt: Math.floor(Date.now() / 1000),
       updatedAt: Math.floor(Date.now() / 1000),
     });
@@ -128,8 +127,8 @@ describe('Product API', () => {
     const response = await request(server).patch(`/products/${newProduct.body.id}`).send(updatedProductData);
     expect(response.status).toBe(200);
     expect(response.body.name).toBe(updatedProductData.name);
-    expect(response.body.price).toBe(updatedProductData.price); // Comparer comme nombre
-    expect(Number.isInteger(response.body.price)).toBe(true); // Vérifier que le prix est un entier
+    expect(response.body.price).toBe(updatedProductData.price);
+    expect(Number.isInteger(response.body.price)).toBe(true);
   });
 
   it('should delete a product by ID', async () => {
@@ -144,7 +143,7 @@ describe('Product API', () => {
       internalReference: 'REF004',
       shellId: 4,
       inventoryStatus: 'INSTOCK',
-      rating: 2, // Utiliser un nombre entier pour rating
+      rating: 2,
       createdAt: Math.floor(Date.now() / 1000),
       updatedAt: Math.floor(Date.now() / 1000),
     });
