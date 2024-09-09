@@ -1,30 +1,44 @@
+import 'reflect-metadata';
 import express, { Application } from 'express';
-import bodyParser from 'body-parser';
-import productRoutes from './routes/products';
+import { AppDataSource } from './data-source';
+import { productRouter } from './routes/products';
+import * as dotenv from 'dotenv';
+
+// Charger les variables d'environnement depuis le fichier .env
+dotenv.config();  
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Définir les routes principales
-app.get('/', (req, res) => {
-  res.send(`
-    <h1>Bienvenue sur l'API de gestion des produits</h1>
-    <h2>Routes disponibles :</h2>
-    <ul>
-      <li>GET /products - Récupérer tous les produits</li>
-      <li>POST /products - Ajouter un nouveau produit</li>
-      <li>GET /products/:id - Récupérer un produit par son ID</li>
-      <li>PATCH /products/:id - Mettre à jour un produit par son ID</li>
-      <li>DELETE /products/:id - Supprimer un produit par son ID</li>
-    </ul>
-  `);
-});
+// Initialiser la connexion à la base de données
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Connexion réussie à la base de données");
 
-// Utiliser les routes des produits
-app.use('/products', productRoutes);
+    app.get('/', (req, res) => {
+      // Retourner les routes sous forme de JSON
+      res.json({
+        message: "Bienvenue sur l'API de gestion des produits",
+        routes: [
+          { method: "GET", path: "/products", description: "Récupérer tous les produits" },
+          { method: "POST", path: "/products", description: "Ajouter un nouveau produit" },
+          { method: "GET", path: "/products/:id", description: "Récupérer un produit par son ID" },
+          { method: "PATCH", path: "/products/:id", description: "Mettre à jour un produit par son ID" },
+          { method: "DELETE", path: "/products/:id", description: "Supprimer un produit par son ID" }
+        ]
+      });
+    });
 
-app.listen(PORT, () => {
-  console.log(`Le serveur écoute sur le port ${PORT}`);
-});
+    // Utiliser les routes des produits
+    app.use('/products', productRouter);
+
+    // Démarrer le serveur
+    app.listen(PORT, () => {
+      console.log(`Le serveur écoute sur le port ${PORT}`);
+    });
+  })
+  .catch(error => {
+    console.error("Erreur lors de la connexion à la base de données", error);
+  });

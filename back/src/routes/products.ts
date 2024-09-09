@@ -1,74 +1,87 @@
 import { Router, Request, Response } from 'express';
-import { Product } from '../models/product';
+import { Product } from '../entity/Product';
+import { AppDataSource } from '../data-source';
+import { validate } from 'class-validator';
 
 const router = Router();
 
-// Liste de produits en mémoire
-let products: Product[] = [];
-
 // GET /products - Récupérer tous les produits
-router.get('/', (req: Request, res: Response) => {
-  res.json(products);
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const productRepository = AppDataSource.getRepository(Product);
+    const products = await productRepository.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des produits', error });
+  }
 });
 
 // POST /products - Ajouter un produit
-router.post('/', (req: Request, res: Response) => {
-  const newProduct: Product = req.body;
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const productRepository = AppDataSource.getRepository(Product);
+    const newProduct = productRepository.create(req.body);
 
-  if (!newProduct.name || !newProduct.price) {
-    return res.status(400).send("Le nom et le prix sont obligatoires");
+    const errors = await validate(newProduct);
+    if (errors.length > 0) {
+      return res.status(400).json({ message: 'Validation échouée', errors });
+    }
+
+    await productRepository.save(newProduct);
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de l\'ajout du produit', error });
   }
-
-  newProduct.id = products.length ? products[products.length - 1].id + 1 : 1;
-  newProduct.createdAt = Date.now();
-  newProduct.updatedAt = Date.now();
-
-  products.push(newProduct);
-
-  res.status(201).json(newProduct);
 });
 
 // GET /products/:id - Récupérer un produit par son ID
-router.get('/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  const product = products.find(p => p.id === parseInt(id));
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const productRepository = AppDataSource.getRepository(Product);
+    const product = await productRepository.findOneBy({ id: Number(req.params.id) });
 
-  if (!product) {
-    return res.status(404).json({ message: `Produit avec l'ID ${id} non trouvé` });
+    if (!product) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération du produit', error });
   }
-
-  res.json(product);
 });
 
 // PATCH /products/:id - Mettre à jour un produit par son ID
-router.patch('/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  const product = products.find(p => p.id === parseInt(id));
+router.patch('/:id', async (req: Request, res: Response) => {
+  try {
+    const productRepository = AppDataSource.getRepository(Product);
+    const product = await productRepository.findOneBy({ id: Number(req.params.id) });
 
-  if (!product) {
-    return res.status(404).json({ message: `Produit avec l'ID ${id} non trouvé` });
+    if (!product) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    productRepository.merge(product, req.body);
+    const updatedProduct = await productRepository.save(product);
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du produit', error });
   }
-
-  const updatedProduct: Partial<Product> = req.body;
-  const updatedAt = Date.now();
-
-  Object.assign(product, updatedProduct, { updatedAt });
-
-  res.json(product);
 });
 
 // DELETE /products/:id - Supprimer un produit par son ID
-router.delete('/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  const productIndex = products.findIndex(p => p.id === parseInt(id));
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const productRepository = AppDataSource.getRepository(Product);
+    const result = await productRepository.delete(req.params.id);
 
-  if (productIndex === -1) {
-    return res.status(404).json({ message: `Produit avec l'ID ${id} non trouvé` });
+    if (result.affected === 0) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    res.status(204).send('Produit supprimé');
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la suppression du produit', error });
   }
-
-  products.splice(productIndex, 1);
-
-  res.status(204).send();
 });
 
-export default router;
+export { router as productRouter };
