@@ -125,6 +125,18 @@ npm install
 npm start
 ```
 
+Vous pouvez maintenant tester les différentes routes de l'API en vous rendant sur l'adresse suivante : 
+```bash
+http://localhost:3000
+http://localhost:3000/products
+http://localhost:3000/products/1000
+```
+
+Ou en important la collection Postman disponible dans le fichier :
+```
+back/tests/tests-postman.json
+```
+
 Pour lancer les tests, suivez les étapes suivantes : 
 ```bash
 npm test
