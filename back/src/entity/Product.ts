@@ -20,7 +20,7 @@ export class Product {
   @Column()
   category!: string;
 
-  @Column('decimal')
+  @Column()
   price!: number;
 
   @Column()
@@ -39,12 +39,12 @@ export class Product {
   })
   inventoryStatus!: 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK';
 
-  @Column('decimal')
+  @Column()
   rating!: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   createdAt!: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   updatedAt!: number;
 }

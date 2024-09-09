@@ -4,6 +4,8 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+let initialized = false;
+
 export const AppDataSource = new DataSource({
   type: 'mysql',
   host: process.env.DB_HOST,
@@ -15,3 +17,10 @@ export const AppDataSource = new DataSource({
   logging: true,
   entities: [Product],
 });
+
+export async function initializeDataSource() {
+  if (!initialized) {
+    await AppDataSource.initialize();
+    initialized = true;
+  }
+}
