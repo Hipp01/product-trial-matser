@@ -1,0 +1,50 @@
+<h1 class="text-center">Votre Panier</h1>
+
+<div class="cart-container" *ngIf="cartItems.length > 0; else emptyCart">
+  <p-card *ngFor="let item of cartItems" class="block mb-2 mx-5 px-5">
+    <div class="flex justify-between items-start">
+      <div class="item-info flex-1 pr-4 px-5">
+          <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
+          <div class="text-lg font-medium text-900 mt-2">{{ item.name }}</div>
+          <div class="text-sm mt-2">{{ item.description }}</div>
+          <div class="text-lg font-medium text-900 mt-2">{{ item.price }} €</div>
+          <div class="flex items-center mt-3">
+              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+                  <i class="pi" 
+                  [ngClass]="{
+                      'pi-star-fill text-yellow-500': i < item.rating,
+                      'pi-star text-gray-400': i >= item.rating
+                  }"></i>
+              </ng-container>
+              <span class="ml-2 text-sm text-gray-600">({{ item.rating }} / 5)</span>
+          </div>
+          <div class="text-lg mt-2">
+              @if (item.inventoryStatus === 'INSTOCK') {
+                  <p class="font-medium text-green-500">In stock</p>
+              }
+              @else if (item.inventoryStatus === 'LOWSTOCK') {
+                  <p class="font-medium text-orange-500">Low stock</p>
+              }
+              @else {
+                  <p class="font-medium text-red-500">Out of stock</p>
+              }
+          </div>
+      </div>
+      <div class="img-container ml-4" style="max-width: 150px; max-height: 150px;">
+          <img [src]="'assets/images/' + item.image" alt="{{ item.name }}" class="w-full h-full object-contain"/>
+      </div>
+      <div class="product-actions flex items-center">
+        <button pButton label="Supprimer" icon="pi pi-trash" (click)="removeFromCart(item)" class="p-button-danger ml-3"></button>
+      </div>
+  </div>
+  </p-card>
+
+  <div class="cart-summary mt-4 mx-5 px-5">
+    <h2>Total : {{ getTotalPrice() }} €</h2>
+    <button pButton label="Vider le panier" icon="pi pi-times" (click)="clearCart()" class="p-button-danger mt-3"></button>
+  </div>
+</div>
+
+<ng-template #emptyCart>
+  <p class="text-center">Votre panier est vide.</p>
+</ng-template>

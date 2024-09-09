@@ -6,7 +6,12 @@
         {{ title }}
     </div>
     <div class="p-toolbar-group-end">
-        <i class="pi pi-shopping-cart" style="font-size: 2rem"></i>
+        <div class="cart-container">
+            <i class="pi pi-shopping-cart" 
+            style="font-size: 2rem; cursor: pointer;"
+            (click)="navigateToCart()"></i>
+            <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </div>
     </div>
 </p-toolbar>
 <p-splitter 

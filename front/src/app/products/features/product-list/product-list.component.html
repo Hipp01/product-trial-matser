@@ -1,16 +1,60 @@
 <h1 class="text-center">Liste des produits</h1>
 
-<p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
+<div class="flex justify-between mx-5">
+    <p-button label="Créer produit" (onClick)="onCreate()" class="block mx-5 px-2 text-center"/>
+    <mat-paginator [length]="totalProducts"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="[5, 10, 20]"
+                (page)="onPageChange($event)"
+                class="ml-auto">
+    </mat-paginator>
+</div>
 
-<p-dataView #dv [value]="products()">
+
+<p-dataView #dv [value]="paginatedProducts">
     <ng-template pTemplate="list" let-products>
-        @for (product of products; track product) {
-            <p-card class="block mb-2">
-                <span class="font-medium text-secondary text-sm">{{ product.category }}</span>
-                <div class="text-lg font-medium text-900 mt-2">{{ product.name }}</div>
-
+        @for (product of paginatedProducts; track product) {
+            <p-card class="block mb-2 mx-5 px-5">
+                <div class="flex justify-between items-start">
+                    <div class="product-info flex-1 pr-4 px-5">
+                        <span class="font-medium text-secondary text-sm">{{ product.category }}</span>
+                        <div class="text-lg font-medium text-900 mt-2">{{ product.name }}</div>
+                        <div class="text-sm mt-2">{{ product.description }}</div>
+                        <div class="text-lg font-medium text-900 mt-2">{{ product.price }} €</div>
+                        <div class="flex items-center mt-3">
+                            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+                                <i class="pi" 
+                                [ngClass]="{
+                                    'pi-star-fill text-yellow-500': i < product.rating,
+                                    'pi-star text-gray-400': i >= product.rating
+                                }"></i>
+                            </ng-container>
+                            <span class="ml-2 text-sm text-gray-600">({{ product.rating }} / 5)</span>
+                        </div>
+                        <div class="text-lg mt-2">
+                            @if (product.inventoryStatus === 'INSTOCK') {
+                                <p class="font-medium text-green-500">In stock</p>
+                            }
+                            @else if (product.inventoryStatus === 'LOWSTOCK') {
+                                <p class="font-medium text-orange-500">Low stock</p>
+                            }
+                            @else {
+                                <p class="font-medium text-red-500">Out of stock</p>
+                            }
+                        </div>
+                    </div>
+                    <div class="img-container ml-4" style="max-width: 150px; max-height: 150px;">
+                        <img [src]="'assets/images/' + product.image" alt="{{ product.name }}" class="w-full h-full object-contain"/>
+                    </div>
+                </div>
                 <ng-template pTemplate="footer">
-                    <div class="flex gap-3 mt-1">
+                    <div class="flex gap-3 mt-1 px-5">
+                        @if (product.inventoryStatus !== 'OUTOFSTOCK') {
+                            <p-button label="Ajouter au panier" severity="primary" (onClick)="onAddToCart(product)"/>
+                        }
+                        @else {
+                            <p-button label="Produit indisponible" disabled />
+                        }
                         <p-button label="Modifier" severity="secondary" (onClick)="onUpdate(product)"/>
                         <p-button label="Supprimer" severity="danger" (onClick)="onDelete(product)" />
                     </div>
@@ -19,6 +63,13 @@
         }
     </ng-template>
 </p-dataView>
+
+<mat-paginator [length]="totalProducts"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="[5, 10, 20]"
+                (page)="onPageChange($event)"
+                class="ml-auto">
+    </mat-paginator>
 
 <p-dialog [(visible)]="isDialogVisible"
     [style]="{ width: '50vw' }"
